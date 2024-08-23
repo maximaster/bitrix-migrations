@@ -1,0 +1,35 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+[, $command] = array_pad($argv, 2, null);
+
+if ($command !== 'init') {
+    echo 'В данный момент поддерживается только команда init для установки первичных конфигов.';
+    exit(1);
+}
+
+$workingDirectory = getcwd();
+
+$configFiles = [__DIR__ . '/../config/migrations.php', __DIR__ . '/../config/migrations-db.php'];
+foreach ($configFiles as $configFile) {
+    $targetFile = $workingDirectory . DIRECTORY_SEPARATOR . basename($configFile);
+    if (file_exists($targetFile)) {
+        echo sprintf('Файл %s был пропущен, т.к. уже существует в текущей директории.', basename($configFile)) . PHP_EOL;
+
+        continue;
+    }
+
+    $copied = copy($configFile, $workingDirectory . DIRECTORY_SEPARATOR . basename($configFile));
+    if ($copied === false) {
+        echo sprintf('Не удалось скопировать файл %s в текущую директорию. Инициализация прервана.', basename($configFile)) . PHP_EOL;
+
+        exit(1);
+    }
+}
+
+echo 'Конфиги doctrine/migrations на месте.' . PHP_EOL;
+echo sprintf('Отредактируйте их, при необходимости: %s.', implode(', ', array_map('basename', $configFiles))) . PHP_EOL;
+
+exit(0);

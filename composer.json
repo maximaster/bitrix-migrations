@@ -1,0 +1,15 @@
+{
+    "name": "maximaster/bitrix-migrations",
+    "description": "Миграции для Битрикс с помощью Doctrine Migrations.",
+    "bin": ["bin/bitrix-migrations"],
+    "require": {
+        "php": ">8.2",
+        "doctrine/migrations": "^4.0",
+        "maximaster/bitrix-loader": "^1.1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Maximaster\\BitrixMigrations\\": "src/"
+        }
+    }
+}
