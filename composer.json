@@ -1,6 +1,7 @@
 {
     "name": "maximaster/bitrix-migrations",
     "description": "Миграции для Битрикс с помощью Doctrine Migrations.",
+    "license": "MIT",
     "bin": ["bin/bitrix-migrations"],
     "require": {
         "php": ">8.2",
