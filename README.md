@@ -63,7 +63,9 @@ $this->addCreateIblockTableSql('b_iblock_element_prop_s?', sprintf('XML_ID = "%s
 приложение доп. команды данного пакета (пока есть только одна):
 
 * `bitrix-migrations:generate-table` - генерирует миграцию, которая создаёт
-  таблицу в базе данных по DataManager-классу.
+  таблицу в базе данных по DataManager-классу;
+* `bitrix-migrations:generate-perfmon` - генерирует миграцию, которая будет
+  содержать addSql-запросы взятые из монитора производительности;
 
 ```php
 $bitrixLoader = \Maximaster\BitrixLoader\BitrixLoader::fromComposerConfigExtra(__DIR__ . '/../composer.json');

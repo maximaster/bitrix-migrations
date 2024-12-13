@@ -12,6 +12,7 @@ use Doctrine\Migrations\DependencyFactory;
 use Doctrine\Migrations\Tools\Console\Command\DoctrineCommand;
 use Exception;
 use Maximaster\BitrixLoader\BitrixLoader;
+use Maximaster\BitrixMigrations\NamespaceNormalizer;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -27,14 +28,18 @@ class GenerateTableMigrationCliCommand extends DoctrineCommand
     public const OPT_NAMESPACE = 'namespace';
 
     private BitrixLoader $bitrixLoader;
+    private NamespaceNormalizer $namespaceNormalizer;
 
     public function __construct(
         BitrixLoader $bitrixLoader,
+        NamespaceNormalizer $namespaceNormalizer,
         ?DependencyFactory $dependencyFactory = null,
         ?string $name = null
     ) {
         parent::__construct($dependencyFactory, $name);
+
         $this->bitrixLoader = $bitrixLoader;
+        $this->namespaceNormalizer = $namespaceNormalizer;
     }
 
     public static function getDefaultName(): ?string
