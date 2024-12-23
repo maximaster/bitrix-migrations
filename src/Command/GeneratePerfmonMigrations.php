@@ -96,7 +96,7 @@ class GeneratePerfmonMigrations extends DoctrineCommand
 
     private function shouldBeIncluded(string $sql): bool
     {
-        static $typeSliceLength = strlen('TRUNCATE') + 1;
+        static $typeSliceLength = 9; // strlen('TRUNCATE') + 1;
         static $trackedTypes = [
             'CREATE',
             'DROP',
