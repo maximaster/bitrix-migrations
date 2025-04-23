@@ -75,12 +75,20 @@ class GenerateTableMigrationCliCommand extends DoctrineCommand
 
         $di = $this->getDependencyFactory();
 
-        $namespace = (string) $input->getOption(self::OPT_NAMESPACE);
-        $this->normalizeNamespace($namespace, $di->getConfiguration());
+        $namespace = $input->getOption(self::OPT_NAMESPACE);
+        $namespace = is_scalar($namespace) ? strval($namespace) : '';
+
+        $this->namespaceNormalizer->normalize($namespace, $di->getConfiguration());
 
         $this->bitrixLoader->prologBefore();
 
         $tableClass = $input->getArgument(self::ARG_TABLE);
+        $tableClass = is_string($tableClass) && class_exists($tableClass) && is_a($tableClass, DataManager::class, true) ? $tableClass : null;
+        if ($tableClass === null) {
+            $ss->error(sprintf('Класс "%s" должен быть наследником "%s".', $tableClass, DataManager::class));
+
+            return self::FAILURE;
+        }
 
         $createDump = [];
         foreach ($this->generateCreateTableDump($tableClass) as $query) {
@@ -105,32 +113,14 @@ class GenerateTableMigrationCliCommand extends DoctrineCommand
     }
 
     /**
-     * @throws Exception
-     */
-    private function normalizeNamespace(string &$namespace, Configuration $configuration): void
-    {
-        if ($namespace === '') {
-            $namespace = null;
-        }
-
-        $dirs = $configuration->getMigrationDirectories();
-        if ($namespace === null) {
-            $namespace = key($dirs);
-        } elseif (isset($dirs[$namespace]) === false) {
-            throw new Exception(sprintf('Неизвестный namespace %s. Не создана директория миграций?', $namespace));
-        }
-    }
-
-    /**
-     * @return string[]
+     * @param class-string<DataManager> $tableClass
+     * @return list<non-empty-string>
      *
      * @throws ArgumentException|SystemException
-     *
-     * @psalm-param class-string<DataManager> $tableClass
      */
     private function generateCreateTableDump(string $tableClass): array
     {
-        /** @var DataManager $tableClass */
+        /** @var class-string<DataManager> $tableClass */
         return $tableClass::getEntity()->compileDbTableStructureDump();
     }
 
@@ -139,7 +129,7 @@ class GenerateTableMigrationCliCommand extends DoctrineCommand
      */
     private function generateDropTableSql(string $tableClass): string
     {
-        /** @var DataManager $tableClass */
+        /** @var class-string<DataManager> $tableClass */
         return sprintf('DROP TABLE `%s`', $tableClass::getTableName());
     }
 }

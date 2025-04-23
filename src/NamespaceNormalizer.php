@@ -6,6 +6,9 @@ use Doctrine\Migrations\Configuration\Configuration;
 
 class NamespaceNormalizer
 {
+    /**
+     * @return non-empty-string
+     */
     public function normalize(string $namespace, Configuration $configuration): string
     {
         $dirs = $configuration->getMigrationDirectories();

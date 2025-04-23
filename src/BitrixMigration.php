@@ -13,9 +13,6 @@ use Maximaster\BitrixMigrations\Sql\Parameters;
 
 /**
  * Базовый класс миграции для Bitrix проекта.
- *
- * @SuppressWarnings(PHPMD.CamelCaseVariableName) why:intended
- * @SuppressWarnings(PHPMD.NumberOfChildren) why:intended
  */
 abstract class BitrixMigration extends AbstractMigration
 {
@@ -28,12 +25,19 @@ abstract class BitrixMigration extends AbstractMigration
      * @psalm-param list<mixed>|array<string, mixed> $params
      * @psalm-return non-empty-string
      */
-    protected function idWhere(string $table, string $where, array $params = []): string
+    public function idWhere(string $table, string $where, array $params = []): string
     {
-        return (string) $this->fieldWhere($table, 'ID', $where, $params);
+        $id = (string) $this->fieldWhere($table, 'ID', $where, $params);
+
+        if ($id === '') {
+            throw new LibraryException('Получен пустой идентификатор.');
+        }
+
+        return $id;
     }
 
     /**
+     * @psalm-param list<mixed>|array<string, mixed> $params
      * @psalm-return non-empty-string
      *
      * @throws LibraryException
@@ -58,6 +62,7 @@ abstract class BitrixMigration extends AbstractMigration
      * @throws LibraryException
      *
      * @psalm-param list<mixed>|array<string, mixed> $params
+     * @psalm-return scalar|null
      */
     protected function fieldWhere(string $table, string $field, string $where, array $params = [])
     {
@@ -66,8 +71,18 @@ abstract class BitrixMigration extends AbstractMigration
             $params
         );
 
+        $foundValue = reset($ids);
+        if (is_scalar($foundValue) === false && $foundValue !== null) {
+            throw new LibraryException(
+                sprintf(
+                    'Ожидалось, что по указанному условию будет найдена 1 запись со скалярным значением или NULL. Найдено значение типа %s.',
+                    get_debug_type($foundValue),
+                )
+            );
+        }
+
         return match (count($ids)) {
-            1 => reset($ids),
+            1 => $foundValue,
             default => throw new LibraryException(
                 sprintf(
                     'Ожидалось, что по указанному условию будет найдена 1 запись таблицы %s, найдено %d.',
@@ -114,12 +129,12 @@ abstract class BitrixMigration extends AbstractMigration
      * Добавить UPDATE-запрос в указанную таблицу.
      *
      * @psalm-param array<string, mixed> $fields
-     * @psalm-param Callable(Parameters):string|null $where Генератор WHERE-условий
+     * @psalm-param (Callable(Parameters):string)|null $where Генератор WHERE-условий
      */
     protected function addUpdateSql(string $table, array $fields, ?callable $where): void
     {
         $this->addGeneratedSql(fn (Parameters $_) => "
-            UPDATE $table SET {$_->upsert($fields)} {$_->if($where !== null, fn () => 'WHERE ' . $where($_))}
+            UPDATE $table SET {$_->upsert($fields)} {$_->maybe($where === null ? null : fn () => 'WHERE ' . $where($_))}
         ");
     }
 
@@ -133,7 +148,7 @@ abstract class BitrixMigration extends AbstractMigration
         string $definition = ''
     ): void {
         $nameParts = preg_split('/(\?)/', $nameTemplate, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-        if (count($nameParts) === 1) {
+        if (is_array($nameParts) === false || count($nameParts) === 1) {
             throw new InvalidArgumentException('Для создания таблицы со статичным именем используйте addSql');
         }
 
@@ -174,6 +189,8 @@ abstract class BitrixMigration extends AbstractMigration
 
     /**
      * Добавить запрос удаляющий строки таблицы при выполнении определённого условия.
+     *
+     * @param list<scalar|null|array<array-key, scalar|null>> $parameters
      */
     protected function addDeleteWhereSql(string $table, string $where, array $parameters): void
     {
@@ -217,6 +234,10 @@ abstract class BitrixMigration extends AbstractMigration
         ");
     }
 
+    /**
+     * @param list<scalar|null|array<array-key, scalar|null>> $parameters
+     * @return array<int<0, max>, ArrayParameterType>
+     */
     private function guessedTypes(array $parameters): array
     {
         $types = [];

@@ -3,12 +3,34 @@
     "description": "Миграции для Битрикс с помощью Doctrine Migrations.",
     "minimum-stability": "dev",
     "license": "MIT",
-    "bin": ["bin/bitrix-migrations"],
+    "bin": [
+        "bin/bitrix-migrations"
+    ],
+    "scripts": {
+        "lint": [
+            "ecs",
+            "phpstan"
+        ],
+        "qa": [
+            "composer run lint"
+        ],
+        "fix": "ecs --fix"
+    },
     "require": {
-        "php": ">8.2",
+        "php": ">=8.3",
         "doctrine/migrations": "^4.0",
         "maximaster/bitrix-loader": "^1.1.0",
-        "doctrine/sql-formatter": "^1.2"
+        "doctrine/sql-formatter": "^1.2",
+        "maximaster/lazy-scalar": "^1.0.0",
+        "maximaster/attributemplate": "^1.0.0"
+    },
+    "require-dev": {
+        "ramsey/uuid": "5.x-dev",
+        "symplify/easy-coding-standard": "^12.5",
+        "phpstan/phpstan": "2.1.x-dev"
+    },
+    "suggest": {
+        "ramsey/uuid": "to use \\Maximaster\\Attributemplate\\JustScalar\\Guid"
     },
     "autoload": {
         "psr-4": {
@@ -16,7 +38,13 @@
         }
     },
     "authors": [
-        {"name": "Лавриненко Максим", "email": "maxim.lavrinenko@maximaster.ru"},
-        {"name": "Мельников Максим", "email": "m.melnikov@maximaster.ru"}
+        {
+            "name": "Лавриненко Максим",
+            "email": "maxim.lavrinenko@maximaster.ru"
+        },
+        {
+            "name": "Мельников Максим",
+            "email": "m.melnikov@maximaster.ru"
+        }
     ]
 }

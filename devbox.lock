@@ -1,52 +1,52 @@
 {
   "lockfile_version": "1",
   "packages": {
-    "php@8.2": {
-      "last_modified": "2024-11-28T07:51:56Z",
+    "php@8.3": {
+      "last_modified": "2025-04-12T15:53:49Z",
       "plugin_version": "0.0.3",
-      "resolved": "github:NixOS/nixpkgs/226216574ada4c3ecefcbbec41f39ce4655f78ef#php82",
+      "resolved": "github:NixOS/nixpkgs/52d0eded529af34e91df6b2a2bc32eb636637cd2#php83",
       "source": "devbox-search",
-      "version": "8.2.26",
+      "version": "8.3.20",
       "systems": {
         "aarch64-darwin": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/anvz12l3wwlkl71mmkygcdwq00j67zqh-php-with-extensions-8.2.26",
+              "path": "/nix/store/yma3c8yqg701s023wil3a9kcxslkf8py-php-with-extensions-8.3.20",
               "default": true
             }
           ],
-          "store_path": "/nix/store/anvz12l3wwlkl71mmkygcdwq00j67zqh-php-with-extensions-8.2.26"
+          "store_path": "/nix/store/yma3c8yqg701s023wil3a9kcxslkf8py-php-with-extensions-8.3.20"
         },
         "aarch64-linux": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/9kw4ap9pb6j6p0p3j717kcgnph7d6arj-php-with-extensions-8.2.26",
+              "path": "/nix/store/5rkfw35fk3kgwalzpzm1ypb4zdfb9izz-php-with-extensions-8.3.20",
               "default": true
             }
           ],
-          "store_path": "/nix/store/9kw4ap9pb6j6p0p3j717kcgnph7d6arj-php-with-extensions-8.2.26"
+          "store_path": "/nix/store/5rkfw35fk3kgwalzpzm1ypb4zdfb9izz-php-with-extensions-8.3.20"
         },
         "x86_64-darwin": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/1qn6n0lzzrpjrzcav0bjik38sbj1j14j-php-with-extensions-8.2.26",
+              "path": "/nix/store/5ayf5mw0v7a3c43y11l4qb1q66vw4db2-php-with-extensions-8.3.20",
               "default": true
             }
           ],
-          "store_path": "/nix/store/1qn6n0lzzrpjrzcav0bjik38sbj1j14j-php-with-extensions-8.2.26"
+          "store_path": "/nix/store/5ayf5mw0v7a3c43y11l4qb1q66vw4db2-php-with-extensions-8.3.20"
         },
         "x86_64-linux": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/dbmigcz1ybgc2rn7d2bgrzqrwcb72n17-php-with-extensions-8.2.26",
+              "path": "/nix/store/4d8m7d1cd3a6br1j3d8whgv56dswjg53-php-with-extensions-8.3.20",
               "default": true
             }
           ],
-          "store_path": "/nix/store/dbmigcz1ybgc2rn7d2bgrzqrwcb72n17-php-with-extensions-8.2.26"
+          "store_path": "/nix/store/4d8m7d1cd3a6br1j3d8whgv56dswjg53-php-with-extensions-8.3.20"
         }
       }
     }

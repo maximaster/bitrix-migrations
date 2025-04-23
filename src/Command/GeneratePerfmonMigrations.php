@@ -59,14 +59,21 @@ class GeneratePerfmonMigrations extends DoctrineCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->bitrixLoader->prologBefore();
-        Loader::includeModule('perfmon');
-
         $ss = new SymfonyStyle($input, $output);
 
+        $this->bitrixLoader->prologBefore();
+        if (Loader::includeModule('perfmon') === false) {
+            $ss->error('Установите модуль perfmon.');
+
+            return self::FAILURE;
+        }
+
         $di = $this->getDependencyFactory();
+
+        $namespace = $input->getOption(self::OPT_NAMESPACE);
+        $namespace = is_scalar($namespace) ? strval($namespace) : '';
         $namespace = $this->namespaceNormalizer->normalize(
-            strval($input->getOption(self::OPT_NAMESPACE)),
+            $namespace,
             $di->getConfiguration()
         );
 
@@ -78,10 +85,18 @@ class GeneratePerfmonMigrations extends DoctrineCommand
             false
         );
         while ($entry = $res->Fetch()) {
-            $sql = trim($entry['SQL_TEXT']);
-            if ($this->shouldBeIncluded($sql)) {
-                $queries[] = $this->sqlFormatter->format($sql);
+            if (is_scalar($entry['SQL_TEXT']) === false) {
+                continue;
             }
+
+            $sql = trim(strval($entry['SQL_TEXT']));
+            if ($this->shouldBeIncluded($sql) === false) {
+                continue;
+            }
+
+            /** @var non-empty-string $formattedSql */
+            $formattedSql = $this->sqlFormatter->format($sql);
+            $queries[] = $formattedSql;
         }
 
         $migrationPath = $di->getMigrationGenerator()->generateMigration(

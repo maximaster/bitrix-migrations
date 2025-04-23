@@ -12,14 +12,22 @@ use ReturnTypeWillChange;
 
 /**
  * Параметры связанные с запросом.
+ * @implements ArrayAccess<non-empty-string, mixed>
  */
 class Parameters implements ArrayAccess
 {
+    /** @var array<string, mixed> */
     public array $list = [];
+
+    /** @var array<non-empty-string, ArrayParameterType> */
     public array $types = [];
 
     private int $idx = 0;
 
+    /**
+     * @param non-empty-string|null $name
+     * @param mixed $value
+     */
     public function __invoke($value, ?string $name = null): string
     {
         if ($value instanceof Closure) {
@@ -44,6 +52,9 @@ class Parameters implements ArrayAccess
         return ":$name";
     }
 
+    /**
+     * @param array<string, mixed> $fields
+     */
     public function upsert(array $fields): string
     {
         return $this->joinFields($fields, '=', ',');
@@ -65,6 +76,9 @@ class Parameters implements ArrayAccess
         return $this->joinFields($fields, 'LIKE', ' AND ');
     }
 
+    /**
+     * @param array<string, mixed> $fields
+     */
     private function joinFields(array $fields, string $operator, string $separator): string
     {
         $sqlFields = [];
@@ -95,6 +109,16 @@ class Parameters implements ArrayAccess
     public function if(bool $success, callable $generator): string
     {
         return $success ? $generator($this) : '';
+    }
+
+    /**
+     * Возвращает генерируемую строку, если генератор установлен..
+     *
+     * @psalm-param (Callable(Parameters):string)|null $generator Генератор результирующей строки
+     */
+    public function maybe(?callable $generator): string
+    {
+        return $generator === null ? '' : $generator($this);
     }
 
     public function offsetExists($offset): bool

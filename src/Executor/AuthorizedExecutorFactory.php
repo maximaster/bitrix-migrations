@@ -23,9 +23,6 @@ class AuthorizedExecutorFactory
         $this->loader = $loader;
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.CamelCaseVariableName) why:dependency
-     */
     public function __invoke(DependencyFactory $migratorFactory): Executor
     {
         $this->loader->prologBefore();
